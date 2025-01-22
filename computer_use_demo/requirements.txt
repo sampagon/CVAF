@@ -3,3 +3,10 @@ anthropic[bedrock,vertex]>=0.37.1
 jsonschema==4.22.0
 boto3>=1.28.57
 google-auth<3,>=2
+--find-links https://download.pytorch.org/whl/cu118/torch_stable.html
+qwen-vl-utils==0.0.8
+torch
+torchvision
+torchaudio
+transformers
+accelerate

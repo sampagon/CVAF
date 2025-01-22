@@ -30,6 +30,19 @@ class ButtonFinder:
         
         self.computer_tool = ComputerTool()
 
+    def draw_point(self, image_input, point=None, radius=5):
+        """Draw a point on the image."""
+        if isinstance(image_input, str):
+            image = Image.open(image_input)
+        else:
+            image = image_input.copy()  # Create a copy to avoid modifying original
+
+        if point:
+            x, y = point[0] * image.width, point[1] * image.height
+            draw = ImageDraw.Draw(image)
+            draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill='red')
+        return image
+
     def find_button(self, base64_image, query):
         """Find button location in image based on query."""
         # Convert base64 to PIL Image
@@ -79,7 +92,7 @@ class ButtonFinder:
         return coords, result_base64
 
 async def main():
-    st.title("ShowUI Button Finder Chat")
+    st.title("CVAF Basic Demo")
     
     if 'finder' not in st.session_state:
         st.session_state.finder = ButtonFinder()
@@ -99,7 +112,7 @@ async def main():
     
     if user_query:
         # Take screenshot using ComputerTool
-        tool_result = await st.session_state.finder.computer_tool.run({"action": "screenshot"})
+        tool_result = await st.session_state.finder.computer_tool(action="screenshot")
         
         if tool_result.base64_image:
             # Add user message to chat history
@@ -112,24 +125,37 @@ async def main():
             with st.spinner("Finding element..."):
                 try:
                     coords, marked_image = st.session_state.finder.find_button(tool_result.base64_image, user_query)
-                    
+
                     # Add assistant response to chat history
                     st.session_state.chat_history.append({
                         "role": "assistant",
-                        "content": f"I found the element at coordinates: {coords}",
+                        "content": f"{coords}",
                         "image": marked_image
                     })
-                    
+
+                    image_data = base64.b64decode(tool_result.base64_image)
+                    image = Image.open(BytesIO(image_data))
+
+                    coords = [
+                        int(coords[0] * image.width),
+                        int(coords[1] * image.height)
+                    ]
+                                        
                     # Execute click using ComputerTool
-                    await st.session_state.finder.computer_tool.run({
-                        "action": "click",
-                        "coordinates": coords
-                    })
+                    await st.session_state.finder.computer_tool(
+                        action="mouse_move",
+                        coordinate=coords
+                    )
+
+                    await st.session_state.finder.computer_tool(
+                        action="left_click",
+                        #coordinate=coords
+                    )
                     
                     st.rerun()
                 
                 except Exception as e:
-                    st.error(f"Error processing request: {str(e)}")
+                    st.error(f"Error processing request: {str(e)} Coords: {coords}")
 
     if st.button("Clear Chat"):
         st.session_state.chat_history = []
