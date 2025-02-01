@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.8.0-base-ubuntu22.04
+FROM docker.io/ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBIAN_PRIORITY=high
@@ -57,11 +57,11 @@ RUN git clone --branch v1.5.0 https://github.com/novnc/noVNC.git /opt/noVNC && \
     ln -s /opt/noVNC/vnc.html /opt/noVNC/index.html
 
 # setup user
-ENV USERNAME=computeruse
+ENV USERNAME=controller
 ENV HOME=/home/$USERNAME
 RUN useradd -m -s /bin/bash -d $HOME $USERNAME
 RUN echo "${USERNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-USER computeruse
+USER controller
 WORKDIR $HOME
 
 # setup python
@@ -83,16 +83,12 @@ RUN eval "$(pyenv init -)" && \
 
 ENV PATH="$HOME/.pyenv/shims:$HOME/.pyenv/bin:$PATH"
 
-RUN python -m pip install --upgrade pip==23.1.2 setuptools==58.0.4 wheel==0.40.0 && \
+RUN python -m pip install --upgrade pip==23.1.2 setuptools==58.0.4 wheel==0.40.0 "flask[async]" && \
     python -m pip config set global.disable-pip-version-check true
-
-# only reinstall if requirements.txt changes
-COPY --chown=$USERNAME:$USERNAME computer_use_demo/requirements.txt $HOME/computer_use_demo/requirements.txt
-RUN python -m pip install -r $HOME/computer_use_demo/requirements.txt
 
 # setup desktop env & app
 COPY --chown=$USERNAME:$USERNAME image/ $HOME
-COPY --chown=$USERNAME:$USERNAME computer_use_demo/ $HOME/computer_use_demo/
+COPY --chown=$USERNAME:$USERNAME controller/ $HOME/controller/
 
 ARG DISPLAY_NUM=1
 ARG HEIGHT=768

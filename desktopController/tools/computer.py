@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Literal, TypedDict
 from uuid import uuid4
 
-from anthropic.types.beta import BetaToolComputerUse20241022Param
+#from anthropic.types.beta import BetaToolComputerUse20241022Param
 
 from .base import BaseAnthropicTool, ToolError, ToolResult
 from .run import run
@@ -87,8 +87,8 @@ class ComputerTool(BaseAnthropicTool):
             "display_number": self.display_num,
         }
 
-    def to_params(self) -> BetaToolComputerUse20241022Param:
-        return {"name": self.name, "type": self.api_type, **self.options}
+    #def to_params(self) -> BetaToolComputerUse20241022Param:
+    #    return {"name": self.name, "type": self.api_type, **self.options}
 
     def __init__(self):
         super().__init__()
