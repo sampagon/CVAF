@@ -1,1 +1,1 @@
-![Demo](https://github.com/sampagon/CVAF/raw/main/examples/frameworkDemoSpedUp.gif)
+<img src="examples/frameworkDemoSpedUp.gif" alt="Demo">
