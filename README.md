@@ -1,1 +1,1 @@
-![mp4](examples/frameworkDemoSpedUp.mp4)
+<video src="examples/frameworkDemoSpedUp.mp4" width="600" controls></video>
