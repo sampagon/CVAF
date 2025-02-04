@@ -2,6 +2,13 @@ import docker
 import time
 import requests
 import json
+from qwen_vl_utils import process_vision_info
+from transformers import Qwen2VLForConditionalGeneration, AutoProcessor
+import ast
+import base64
+from PIL import Image, ImageDraw
+from io import BytesIO
+import torch
 
 class Framework:
     def __init__(self, image_name="controller", ports=None):
@@ -17,6 +24,20 @@ class Framework:
         self.image_name = image_name
         self.ports = ports
         self.container = None
+        self.MIN_PIXELS = 256 * 28 * 28
+        self.MAX_PIXELS = 1344 * 28 * 28
+        self._SYSTEM = "Based on the screenshot of the page, I give a text description and you give its corresponding location. The coordinate represents a clickable location [x, y] for an element, which is a relative coordinate on the screenshot, scaled from 0 to 1."
+
+        self.model = Qwen2VLForConditionalGeneration.from_pretrained(
+            "showlab/ShowUI-2B",
+            torch_dtype=torch.bfloat16,
+            device_map="cuda"
+        )
+        self.processor = AutoProcessor.from_pretrained(
+            "Qwen/Qwen2-VL-2B-Instruct", 
+            min_pixels=self.MIN_PIXELS, 
+            max_pixels=self.MAX_PIXELS
+        )
 
     def start(self):
         # Run the container in the background
@@ -27,7 +48,6 @@ class Framework:
             tty=True  # Keep the terminal open
         )
         
-        # Wait until port 5000 is accessible and returns a 200 status code
         url = "http://127.0.0.1:6080"
         print("Waiting for the container to be ready...")
         while True:
@@ -91,3 +111,55 @@ class Framework:
     
     def screenshot(self, action="screenshot", text=None, coordinate=None):
         return self.__command(action, text, coordinate)
+    
+    def type(self, action="type", text=None, coordinate=None):
+        return self.__command(action, text, coordinate)
+    
+    def key(self, action="key", text=None, coordinate=None):
+        return self.__command(action, text, coordinate)
+    
+    def vision_system(self, query):
+        # Convert base64 to PIL Image
+
+        image_data = base64.b64decode(self.screenshot().json()['base64_image'])
+        image = Image.open(BytesIO(image_data))
+        
+        messages = [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": self._SYSTEM},
+                    {"type": "image", "image": image, "min_pixels": self.MIN_PIXELS, "max_pixels": self.MAX_PIXELS},
+                    {"type": "text", "text": query}
+                ],
+            }
+        ]
+
+        # Rest of the processing remains same
+        text = self.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        image_inputs, video_inputs = process_vision_info(messages)
+        inputs = self.processor(
+            text=[text],
+            images=image_inputs,
+            videos=video_inputs,
+            padding=True,
+            return_tensors="pt"
+        ).to("cuda")
+
+        generated_ids = self.model.generate(**inputs, max_new_tokens=128)
+        generated_ids_trimmed = [
+            out_ids[len(in_ids):] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
+        ]
+        output_text = self.processor.batch_decode(
+            generated_ids_trimmed, 
+            skip_special_tokens=True,
+            clean_up_tokenization_spaces=False
+        )[0]
+
+        coords = ast.literal_eval(output_text)
+        coords = [
+            int(coords[0] * image.width),
+            int(coords[1] * image.height)
+        ]
+
+        return coords
