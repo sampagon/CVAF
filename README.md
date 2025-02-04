@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ```python
 from framework import Framework
 import base64
@@ -23,7 +22,7 @@ display(Image(data=base64.b64decode(screenshot.json()['base64_image'])))
 
 
     
-![mp4](examples/test_3_0.png)
+![png](examples/test_3_0.png)
     
 
 
@@ -47,6 +46,3 @@ display(Image(data=base64.b64decode(screenshot.json()['base64_image'])))
 framework.stop()
 #Container with ID: ad9a149907197a70c5430255f870e3367b56777e549f4d9d6187eb17f0e94c3a has been stopped
 ```
-=======
-<img src="examples/frameworkDemoSpedUp.gif" alt="Demo">
->>>>>>> 5e4d46f53a5b60e0a71d79f82e7aaaa17947db39
