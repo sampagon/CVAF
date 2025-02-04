@@ -22,7 +22,7 @@ display(Image(data=base64.b64decode(screenshot.json()['base64_image'])))
 
 
     
-![png](examples/test_3_0.png)
+![png](test_files/test_3_0.png)
     
 
 
