@@ -1,1 +1,1 @@
-<video src="examples/frameworkDemoSpedUp.mp4" width="600" controls></video>
+![Demo](examples/frameworkDemoSpedUp.gif)
