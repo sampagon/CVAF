@@ -1,9 +1,4 @@
 ```python
-TODO:
-Need to add the VLM backend and integrate calling from the Framework class.
-```
-
-```python
 from framework import Framework
 import base64
 from IPython.display import Image, display
