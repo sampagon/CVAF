@@ -1,1 +1,1 @@
-![Demo](examples/frameworkDemoSpedUp.gif)
+![Demo](https://github.com/sampagon/CVAF/raw/main/examples/frameworkDemoSpedUp.gif)
