@@ -11,7 +11,7 @@ from io import BytesIO
 import torch
 
 class Framework:
-    def __init__(self, image_name="controller", ports=None):
+    def __init__(self, image_name="sampagon/cvaf:latest", ports=None):
         if ports is None:
             ports = {
                 '5900/tcp': 5900,
