@@ -11,7 +11,7 @@ CVAF is a computer-vision based automation framework. It allows you to programat
    cd CVAF
    ```
 
-2. **Install dependencies**
+2. **Install dependencies:**  
     Only tested on Python 3.11 so far
     ```bash
     pip install -r requirements.txt
