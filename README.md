@@ -1,48 +1,25 @@
-```python
-from framework import Framework
-import base64
-from IPython.display import Image, display
-```
+# CVAF
 
+CVAF is a computer-vision based automation framework. It allows you to programatically spawn/control/kill a desktop environment. Additonally, it has a vision system that handles open-vocabulary pixel coordinate prediction for UI elements.
 
-```python
-framework = Framework()
-framework.start()
-#Waiting for the container to be ready...
-#Container started successfully with ID: ad9a149907197a70c5430255f870e3367b56777e549f4d9d6187eb17f0e94c3a
-```
-```python
-coords = framework.vision_system("Find the firefox icon")
-framework.mouse_move(coordinate=coords)
-```
-```python
-screenshot = framework.screenshot()
-display(Image(data=base64.b64decode(screenshot.json()['base64_image'])))
-```
+## Installation
 
+1. **Clone the repository:**
 
-    
-![png](test_files/test_3_0.png)
-    
+   ```bash
+   git clone https://github.com/sampagon/CVAF.git
+   cd CVAF
+   ```
 
+2. **Install dependencies**
+    Only tested on Python 3.11 so far
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-
-```python
-framework.left_click()
-```
-```python
-screenshot = framework.screenshot()
-display(Image(data=base64.b64decode(screenshot.json()['base64_image'])))
-```
-
-
-    
-![png](test_files/test_5_0.png)
-    
-
-
-
-```python
-framework.stop()
-#Container with ID: ad9a149907197a70c5430255f870e3367b56777e549f4d9d6187eb17f0e94c3a has been stopped
-```
+## Running Test
+   This may take longer than expected on the first run because the desktop environment image and vision system need to be downloaded from dockerhub and huggingface, respectively.
+   ```bash
+   cd Framework
+   python test.py
+   ```
