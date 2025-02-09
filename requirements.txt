@@ -1,0 +1,9 @@
+--index-url https://download.pytorch.org/whl/cu118
+docker_py==1.10.6
+Pillow==11.1.0
+qwen_vl_utils==0.0.10
+Requests==2.32.3
+torch
+torchvision
+torchaudio
+transformers==4.46.1
