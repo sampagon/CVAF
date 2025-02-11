@@ -41,13 +41,26 @@ class Framework:
 
     def start(self):
         # Run the container in the background
-        self.container = self.client.containers.run(
-            self.image_name,  # Image name
-            ports=self.ports,
-            detach=True,  # Run in background
-            tty=True  # Keep the terminal open
-        )
-        
+        try:
+            self.container = self.client.containers.run(
+                self.image_name,
+                ports=self.ports,
+                detach=True,
+                tty=True,
+                auto_remove=True
+            )
+        except ImageNotFound:
+            print("Pulling desktop image...")
+            # Pull the image from Docker Hub and try running again
+            self.client.images.pull(self.image_name)
+            self.container = self.client.containers.run(
+                self.image_name,
+                ports=self.ports,
+                detach=True,
+                tty=True,
+                auto_remove=True
+            )
+
         url = "http://127.0.0.1:6080"
         print("Waiting for the container to be ready...")
         while True:
@@ -55,6 +68,7 @@ class Framework:
                 response = requests.get(url)
                 if response.status_code == 200:
                     print(f"Container started successfully with ID: {self.container.id}")
+                    print("View desktop at http://127.0.0.1:8080")
                     break  # Exit the loop once the container is ready
             except requests.exceptions.RequestException:
                 # Container is not ready yet, wait and retry

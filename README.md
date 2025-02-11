@@ -20,6 +20,5 @@ CVAF is a computer-vision based automation framework. It allows you to programat
 ## Running Test
    This may take longer than expected on the first run because the desktop environment image and vision system need to be downloaded from dockerhub and huggingface, respectively.
    ```bash
-   cd framework
    python test.py
    ```
