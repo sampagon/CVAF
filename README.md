@@ -22,3 +22,7 @@ CVAF is a computer-vision based automation framework. It allows you to programat
    ```bash
    python test.py
    ```
+## Demo
+
+   https://github.com/user-attachments/assets/6096d26e-0ac1-4695-973b-735c62763372
+
