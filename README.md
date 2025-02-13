@@ -3,6 +3,7 @@
 CVAF is a computer-vision based automation framework. It allows you to programatically spawn/control/kill a desktop environment. Additonally, it has a vision system that handles open-vocabulary pixel coordinate prediction for UI elements.
 
 ## Installation
+Prerequisite: Install Docker
 
 1. **Clone the repository:**
 
